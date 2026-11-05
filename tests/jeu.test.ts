@@ -220,3 +220,71 @@ describe("enregistrement du résultat au classement", () => {
     expect(enregistrer).toHaveBeenCalledTimes(1);
   });
 });
+
+type JeuEnUnSet = Jeu & {
+  jeuxGagnes(joueur: string): number;
+};
+
+const CreerJeuEnUnSet = Jeu as unknown as new (
+  joueur1: string,
+  joueur2: string,
+  classement: Classement,
+  options: { format: "set" },
+) => JeuEnUnSet;
+
+function creerJeuEnUnSet(): JeuEnUnSet {
+  const classement: Classement = { enregistrer: vi.fn() };
+  return new CreerJeuEnUnSet("Alice", "Bob", classement, { format: "set" });
+}
+
+describe("comptage des jeux gagnés dans un set", () => {
+  // Spy avec vi.fn : il fournit un classement sans service réel.
+  // Il est adapté ici car le test porte sur les compteurs, pas sur le classement.
+  it("commence avec zéro jeu gagné pour Alice et Bob", () => {
+    const jeu = creerJeuEnUnSet();
+
+    expect(jeu.jeuxGagnes("Alice")).toBe(0);
+    expect(jeu.jeuxGagnes("Bob")).toBe(0);
+  });
+
+  // Spy avec vi.fn : il remplace le service externe sans l'appeler réellement.
+  // Il convient car seule la victoire du jeu et son compteur sont observés ici.
+  it("augmente les jeux gagnés d'Alice après sa victoire dans un jeu", () => {
+    const jeu = creerJeuEnUnSet();
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+
+    expect(jeu.jeuxGagnes("Alice")).toBe(1);
+  });
+
+  // Spy avec vi.fn : il empêche tout appel à un classement externe pendant le test.
+  // Il est préférable à un service réel puisque l'on teste le compteur de Bob.
+  it("augmente les jeux gagnés de Bob après sa victoire dans un jeu", () => {
+    const jeu = creerJeuEnUnSet();
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    expect(jeu.jeuxGagnes("Bob")).toBe(1);
+  });
+
+  // Spy avec vi.fn : il isole le comptage du service externe.
+  // Il est préférable à un fake complet car aucune logique du classement n'est testée.
+  it("garde les jeux gagnés séparés du score du jeu en cours", () => {
+    const jeu = creerJeuEnUnSet();
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    expect(jeu.jeuxGagnes("Alice")).toBe(1);
+    expect(jeu.jeuxGagnes("Bob")).toBe(0);
+    expect(jeu.score()).toBe("Zéro-Trente");
+  });
+});
