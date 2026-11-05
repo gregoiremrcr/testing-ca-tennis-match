@@ -16,8 +16,18 @@ export class Jeu {
   }
 
   score(): string {
-    const annonces = ["Zéro", "Quinze"];
+    const annonces = ["Zéro", "Quinze", "Trente", "Quarante"];
+    const pointsAnnonceJoueur1 = Math.min(this.pointsJoueur1, 3);
+    const pointsAnnonceJoueur2 = Math.min(this.pointsJoueur2, 3);
 
-    return `${annonces[this.pointsJoueur1] ?? ""}-${annonces[this.pointsJoueur2] ?? ""}`;
+    if (pointsAnnonceJoueur1 === 1 && pointsAnnonceJoueur2 === 1) {
+      return "Quinze-A";
+    }
+
+    if (pointsAnnonceJoueur1 === 2 && pointsAnnonceJoueur2 === 2) {
+      return "Trente-A";
+    }
+
+    return `${annonces[pointsAnnonceJoueur1]}-${annonces[pointsAnnonceJoueur2]}`;
   }
 }
