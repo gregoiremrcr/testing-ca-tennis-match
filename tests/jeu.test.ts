@@ -18,3 +18,43 @@ describe("premier point marqué", () => {
     expect(jeu.score()).toBe("Quinze-Zéro");
   });
 });
+
+describe("progression des points", () => {
+  it("affiche trente-quinze quand Alice a deux points et Bob un point", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Trente-Quinze");
+  });
+
+  it("affiche quarante-trente quand Alice a trois points et Bob deux points", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Quarante-Trente");
+  });
+
+  it("affiche quinze-A quand Alice et Bob ont chacun un point", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Quinze-A");
+  });
+
+  it("affiche trente-A quand Alice et Bob ont chacun deux points", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Trente-A");
+  });
+});
