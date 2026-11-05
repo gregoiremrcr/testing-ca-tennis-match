@@ -128,3 +128,35 @@ describe("victoire à quarante", () => {
     expect(jeu.score()).toBe("Victoire Bob");
   });
 });
+
+describe("résultat après la victoire", () => {
+  it("conserve la victoire d'Alice après un point supplémentaire", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Alice");
+
+    expect(jeu.score()).toBe("Victoire Alice");
+
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Victoire Alice");
+  });
+
+  it("conserve la victoire de Bob après un point supplémentaire", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Victoire Bob");
+
+    jeu.pointPour("Alice");
+
+    expect(jeu.score()).toBe("Victoire Bob");
+  });
+});
