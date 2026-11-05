@@ -2,12 +2,6 @@ import { describe, expect, it, vi } from "vitest";
 import type { Classement } from "../src/classement";
 import { Jeu } from "../src/jeu";
 
-const JeuAvecClassement = Jeu as unknown as new (
-  joueur1: string,
-  joueur2: string,
-  classement: Classement,
-) => Jeu;
-
 describe("score initial", () => {
   it("renvoie zéro-zéro lorsque personne n'a marqué de point", () => {
     const jeu = new Jeu("Alice", "Bob");
@@ -171,7 +165,7 @@ describe("résultat après la victoire", () => {
 function creerJeuAvecClassement() {
   const enregistrer = vi.fn();
   const classement: Classement = { enregistrer };
-  const jeu = new JeuAvecClassement("Alice", "Bob", classement);
+  const jeu = new Jeu("Alice", "Bob", classement);
 
   return { jeu, enregistrer };
 }
