@@ -8,3 +8,13 @@ describe("score initial", () => {
     expect(jeu.score()).toBe("Zéro-Zéro");
   });
 });
+
+describe("premier point marqué", () => {
+  it("affiche quinze-zéro quand Alice marque un point", () => {
+    const jeu = new Jeu("Alice", "Bob");
+
+    jeu.pointPour("Alice");
+
+    expect(jeu.score()).toBe("Quinze-Zéro");
+  });
+});
