@@ -288,3 +288,41 @@ describe("comptage des jeux gagnés dans un set", () => {
     expect(jeu.score()).toBe("Zéro-Trente");
   });
 });
+
+describe("réinitialisation après un jeu gagné", () => {
+  // Spy avec vi.fn : le test ne dépend pas d'un vrai classement externe.
+  // Il permet de se concentrer sur la transition entre deux jeux.
+  it("passe au jeu suivant après une victoire d'Alice", () => {
+    const jeu = creerJeuEnUnSet();
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+
+    expect(jeu.jeuxGagnes("Alice")).toBe(1);
+    expect(jeu.jeuxGagnes("Bob")).toBe(0);
+    expect(jeu.score()).toBe("Zéro-Zéro");
+
+    jeu.pointPour("Alice");
+
+    expect(jeu.score()).toBe("Quinze-Zéro");
+  });
+
+  // Spy avec vi.fn : il remplace le classement sans déclencher de service réel.
+  // Il est adapté, car ces assertions portent sur le jeu courant et ses compteurs.
+  it("passe au jeu suivant après une victoire de Bob", () => {
+    const jeu = creerJeuEnUnSet();
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    expect(jeu.jeuxGagnes("Alice")).toBe(0);
+    expect(jeu.jeuxGagnes("Bob")).toBe(1);
+    expect(jeu.score()).toBe("Zéro-Zéro");
+
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Zéro-Quinze");
+  });
+});
