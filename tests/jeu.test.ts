@@ -360,3 +360,54 @@ describe("victoire du set à quatre jeux", () => {
     },
   );
 });
+
+function creerJeuEnUnSetAvecClassement() {
+  const enregistrer = vi.fn();
+  const classement: Classement = { enregistrer };
+  const jeu = new CreerJeuEnUnSet("Alice", "Bob", classement, {
+    format: "set",
+  });
+
+  return { jeu, enregistrer };
+}
+
+describe("classement du match en un set", () => {
+  // Spy avec vi.fn : il révèle tout appel au classement sans service réel.
+  // Il est adapté pour vérifier qu'une victoire de jeu seule n'est pas enregistrée.
+  it("n'enregistre pas les victoires de jeux individuels", () => {
+    const { jeu, enregistrer } = creerJeuEnUnSetAvecClassement();
+    faireGagnerJeux(jeu, "Alice", 1);
+
+    expect(enregistrer).not.toHaveBeenCalled();
+  });
+
+  // Spy avec vi.fn : il observe les arguments transmis au classement.
+  // Il convient mieux qu'un fake, car le test vérifie l'ordre vainqueur-perdant.
+  it("enregistre le résultat final avec le vainqueur en premier", () => {
+    const { jeu, enregistrer } = creerJeuEnUnSetAvecClassement();
+    faireGagnerJeux(jeu, "Bob", 2);
+    faireGagnerJeux(jeu, "Alice", 4);
+
+    expect(enregistrer).toHaveBeenCalledWith("Alice", "Bob");
+  });
+
+  // Spy avec vi.fn : il compte les appels effectués pendant le match.
+  // Il est préférable à un stub pour vérifier qu'un seul enregistrement a lieu.
+  it("enregistre le résultat du match une seule fois", () => {
+    const { jeu, enregistrer } = creerJeuEnUnSetAvecClassement();
+    faireGagnerJeux(jeu, "Alice", 4);
+
+    expect(enregistrer).toHaveBeenCalledTimes(1);
+  });
+
+  // Spy avec vi.fn : il détecte tout appel tardif après la fin du set.
+  // Il évite d'avoir recours au service externe pour vérifier cette immuabilité.
+  it("n'enregistre pas une seconde fois après la fin du match", () => {
+    const { jeu, enregistrer } = creerJeuEnUnSetAvecClassement();
+    faireGagnerJeux(jeu, "Alice", 4);
+
+    jeu.pointPour("Bob");
+
+    expect(enregistrer).toHaveBeenCalledTimes(1);
+  });
+});
