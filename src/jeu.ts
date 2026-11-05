@@ -56,6 +56,15 @@ export class Jeu {
 
   score(): string {
     if (this.vainqueur !== undefined) {
+      if (this.format === "set") {
+        const perdant =
+          this.vainqueur === this.joueur1 ? this.joueur2 : this.joueur1;
+        const jeuxDuVainqueur = this.jeuxGagnes(this.vainqueur);
+        const jeuxDuPerdant = this.jeuxGagnes(perdant);
+
+        return `Victoire ${this.vainqueur} ${jeuxDuVainqueur}-${jeuxDuPerdant}`;
+      }
+
       return `Victoire ${this.vainqueur}`;
     }
 
@@ -89,11 +98,20 @@ export class Jeu {
         this.jeuxGagnesJoueur2++;
       }
 
+      if (this.jeuxGagnes(vainqueur) >= 4) {
+        this.terminerLeMatch(vainqueur, perdant);
+        return;
+      }
+
       this.pointsJoueur1 = 0;
       this.pointsJoueur2 = 0;
       return;
     }
 
+    this.terminerLeMatch(vainqueur, perdant);
+  }
+
+  private terminerLeMatch(vainqueur: string, perdant: string): void {
     this.vainqueur = vainqueur;
     this.classement.enregistrer(vainqueur, perdant);
   }
