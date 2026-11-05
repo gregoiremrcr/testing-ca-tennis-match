@@ -1,5 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import type { Classement } from "../src/classement";
 import { Jeu } from "../src/jeu";
+
+const JeuAvecClassement = Jeu as unknown as new (
+  joueur1: string,
+  joueur2: string,
+  classement: Classement,
+) => Jeu;
 
 describe("score initial", () => {
   it("renvoie zéro-zéro lorsque personne n'a marqué de point", () => {
@@ -158,5 +165,64 @@ describe("résultat après la victoire", () => {
     jeu.pointPour("Alice");
 
     expect(jeu.score()).toBe("Victoire Bob");
+  });
+});
+
+function creerJeuAvecClassement() {
+  const enregistrer = vi.fn();
+  const classement: Classement = { enregistrer };
+  const jeu = new JeuAvecClassement("Alice", "Bob", classement);
+
+  return { jeu, enregistrer };
+}
+
+describe("enregistrement du résultat au classement", () => {
+  // Spy avec vi.fn : il mémorise les appels et leurs arguments.
+  // Il convient mieux qu'un fake ou un stub, car le test observe cet appel externe.
+  it("enregistre Alice comme vainqueur et Bob comme perdant", () => {
+    const { jeu, enregistrer } = creerJeuAvecClassement();
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Alice");
+
+    expect(enregistrer).toHaveBeenCalledWith("Alice", "Bob");
+  });
+
+  // Spy avec vi.fn : il permet de vérifier qu'aucun appel n'a eu lieu.
+  // Il est préférable à un dummy, qui ne fournirait pas cette observation.
+  it("n'enregistre aucun résultat tant que le match n'est pas terminé", () => {
+    const { jeu, enregistrer } = creerJeuAvecClassement();
+    jeu.pointPour("Alice");
+
+    expect(enregistrer).not.toHaveBeenCalled();
+  });
+
+  // Spy avec vi.fn : il compte précisément les appels au classement.
+  // Il est plus adapté qu'un stub, qui ne mémoriserait pas leur nombre.
+  it("enregistre le résultat une seule fois à la victoire", () => {
+    const { jeu, enregistrer } = creerJeuAvecClassement();
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Alice");
+
+    expect(enregistrer).toHaveBeenCalledTimes(1);
+  });
+
+  // Spy avec vi.fn : il vérifie qu'un point ultérieur ne déclenche pas de nouvel appel.
+  // Il est préférable à un fake ici, car seul le nombre d'appels importe.
+  it("ne réenregistre pas le résultat après un point supplémentaire", () => {
+    const { jeu, enregistrer } = creerJeuAvecClassement();
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+
+    expect(enregistrer).toHaveBeenCalledTimes(1);
   });
 });
