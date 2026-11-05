@@ -20,6 +20,13 @@ export class Jeu {
     const pointsAnnonceJoueur1 = Math.min(this.pointsJoueur1, 3);
     const pointsAnnonceJoueur2 = Math.min(this.pointsJoueur2, 3);
 
+    if (
+      this.pointsJoueur1 >= 3 &&
+      this.pointsJoueur1 === this.pointsJoueur2
+    ) {
+      return "Égalité";
+    }
+
     if (pointsAnnonceJoueur1 === 1 && pointsAnnonceJoueur2 === 1) {
       return "Quinze-A";
     }
