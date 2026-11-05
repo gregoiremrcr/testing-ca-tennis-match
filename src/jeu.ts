@@ -1,6 +1,7 @@
 export class Jeu {
   private pointsJoueur1 = 0;
   private pointsJoueur2 = 0;
+  private vainqueur: string | undefined;
 
   constructor(
     private readonly joueur1: string,
@@ -8,14 +9,31 @@ export class Jeu {
   ) {}
 
   pointPour(joueur: string): void {
+    if (this.vainqueur !== undefined) {
+      return;
+    }
+
+    const etaitEgalite =
+      this.pointsJoueur1 >= 3 && this.pointsJoueur1 === this.pointsJoueur2;
+
     if (joueur === this.joueur1) {
       this.pointsJoueur1++;
+      if (etaitEgalite) {
+        this.vainqueur = this.joueur1;
+      }
     } else if (joueur === this.joueur2) {
       this.pointsJoueur2++;
+      if (etaitEgalite) {
+        this.vainqueur = this.joueur2;
+      }
     }
   }
 
   score(): string {
+    if (this.vainqueur !== undefined) {
+      return `Victoire ${this.vainqueur}`;
+    }
+
     const annonces = ["Zéro", "Quinze", "Trente", "Quarante"];
     const pointsAnnonceJoueur1 = Math.min(this.pointsJoueur1, 3);
     const pointsAnnonceJoueur2 = Math.min(this.pointsJoueur2, 3);
