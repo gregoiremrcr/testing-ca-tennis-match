@@ -58,3 +58,17 @@ describe("progression des points", () => {
     expect(jeu.score()).toBe("Trente-A");
   });
 });
+
+describe("égalité à quarante-quarante", () => {
+  it("affiche égalité quand Alice et Bob ont chacun trois points", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Égalité");
+  });
+});
