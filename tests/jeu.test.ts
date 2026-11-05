@@ -72,3 +72,33 @@ describe("égalité à quarante-quarante", () => {
     expect(jeu.score()).toBe("Égalité");
   });
 });
+
+describe("point décisif sans avantage", () => {
+  it("donne la victoire à Alice si elle marque après égalité", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    jeu.pointPour("Alice");
+
+    expect(jeu.score()).toBe("Victoire Alice");
+  });
+
+  it("donne la victoire à Bob s'il marque après égalité", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Victoire Bob");
+  });
+});
