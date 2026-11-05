@@ -15,15 +15,19 @@ export class Jeu {
 
     const etaitEgalite =
       this.pointsJoueur1 >= 3 && this.pointsJoueur1 === this.pointsJoueur2;
+    const joueur1PeutGagner =
+      this.pointsJoueur1 === 3 && this.pointsJoueur2 < 3;
+    const joueur2PeutGagner =
+      this.pointsJoueur2 === 3 && this.pointsJoueur1 < 3;
 
     if (joueur === this.joueur1) {
       this.pointsJoueur1++;
-      if (etaitEgalite) {
+      if (etaitEgalite || joueur1PeutGagner) {
         this.vainqueur = this.joueur1;
       }
     } else if (joueur === this.joueur2) {
       this.pointsJoueur2++;
-      if (etaitEgalite) {
+      if (etaitEgalite || joueur2PeutGagner) {
         this.vainqueur = this.joueur2;
       }
     }
