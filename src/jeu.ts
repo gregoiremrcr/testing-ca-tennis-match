@@ -1,3 +1,5 @@
+import type { Classement } from "./classement";
+
 export class Jeu {
   private pointsJoueur1 = 0;
   private pointsJoueur2 = 0;
@@ -6,6 +8,7 @@ export class Jeu {
   constructor(
     private readonly joueur1: string,
     private readonly joueur2: string,
+    private readonly classement: Classement = { enregistrer: () => {} },
   ) {}
 
   pointPour(joueur: string): void {
@@ -23,12 +26,12 @@ export class Jeu {
     if (joueur === this.joueur1) {
       this.pointsJoueur1++;
       if (etaitEgalite || joueur1PeutGagner) {
-        this.vainqueur = this.joueur1;
+        this.terminerLeMatch(this.joueur1, this.joueur2);
       }
     } else if (joueur === this.joueur2) {
       this.pointsJoueur2++;
       if (etaitEgalite || joueur2PeutGagner) {
-        this.vainqueur = this.joueur2;
+        this.terminerLeMatch(this.joueur2, this.joueur1);
       }
     }
   }
@@ -58,5 +61,10 @@ export class Jeu {
     }
 
     return `${annonces[pointsAnnonceJoueur1]}-${annonces[pointsAnnonceJoueur2]}`;
+  }
+
+  private terminerLeMatch(vainqueur: string, perdant: string): void {
+    this.vainqueur = vainqueur;
+    this.classement.enregistrer(vainqueur, perdant);
   }
 }
