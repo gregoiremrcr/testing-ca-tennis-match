@@ -102,3 +102,29 @@ describe("point décisif sans avantage", () => {
     expect(jeu.score()).toBe("Victoire Bob");
   });
 });
+
+describe("victoire à quarante", () => {
+  it("donne la victoire à Alice si elle marque avec quarante contre quinze", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Alice");
+    jeu.pointPour("Bob");
+
+    jeu.pointPour("Alice");
+
+    expect(jeu.score()).toBe("Victoire Alice");
+  });
+
+  it("donne la victoire à Bob s'il marque avec quarante contre quinze", () => {
+    const jeu = new Jeu("Alice", "Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Bob");
+    jeu.pointPour("Alice");
+
+    jeu.pointPour("Bob");
+
+    expect(jeu.score()).toBe("Victoire Bob");
+  });
+});
