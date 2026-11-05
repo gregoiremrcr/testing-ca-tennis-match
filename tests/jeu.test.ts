@@ -326,3 +326,37 @@ describe("réinitialisation après un jeu gagné", () => {
     expect(jeu.score()).toBe("Zéro-Quinze");
   });
 });
+
+function faireGagnerJeux(jeu: JeuEnUnSet, joueur: string, nombre: number): void {
+  for (let jeuGagne = 0; jeuGagne < nombre; jeuGagne++) {
+    for (let point = 0; point < 4; point++) {
+      jeu.pointPour(joueur);
+    }
+  }
+}
+
+const casVictoireDuSet = [
+  { vainqueur: "Alice", perdant: "Bob", jeuxPerdant: 0, resultat: "Victoire Alice 4-0" },
+  { vainqueur: "Alice", perdant: "Bob", jeuxPerdant: 1, resultat: "Victoire Alice 4-1" },
+  { vainqueur: "Alice", perdant: "Bob", jeuxPerdant: 2, resultat: "Victoire Alice 4-2" },
+  { vainqueur: "Alice", perdant: "Bob", jeuxPerdant: 3, resultat: "Victoire Alice 4-3" },
+  { vainqueur: "Bob", perdant: "Alice", jeuxPerdant: 0, resultat: "Victoire Bob 4-0" },
+  { vainqueur: "Bob", perdant: "Alice", jeuxPerdant: 1, resultat: "Victoire Bob 4-1" },
+  { vainqueur: "Bob", perdant: "Alice", jeuxPerdant: 2, resultat: "Victoire Bob 4-2" },
+  { vainqueur: "Bob", perdant: "Alice", jeuxPerdant: 3, resultat: "Victoire Bob 4-3" },
+] as const;
+
+describe("victoire du set à quatre jeux", () => {
+  // Spy avec vi.fn : il isole le score du set du service de classement externe.
+  // Il convient ici car ces cas vérifient l'annonce de la victoire, pas l'enregistrement.
+  it.each(casVictoireDuSet)(
+    "annonce $resultat quand $vainqueur atteint quatre jeux",
+    ({ vainqueur, perdant, jeuxPerdant, resultat }) => {
+      const jeu = creerJeuEnUnSet();
+      faireGagnerJeux(jeu, perdant, jeuxPerdant);
+      faireGagnerJeux(jeu, vainqueur, 4);
+
+      expect(jeu.score()).toBe(resultat);
+    },
+  );
+});
